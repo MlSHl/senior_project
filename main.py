@@ -1,36 +1,22 @@
-import matplotlib.pyplot as plt
 import numpy as np
+from funcs import rk4, f, count_sign_changes, plot
+import matplotlib.pyplot as plt
 
-from funcs import rk4, f, count_sign_changes
-
-# an and bn variables, 2.1 line 4 of the paper
-# CHANGES: make a and b vectors
 a = []
 b = []
 a.append(0)
 b.append(4)
 
-d = 2
-alpha = 1
-sigma = 1
-
-# Arbitrary number of iteration after which we stop
-iter_count = 10
+iter_count = 11
 k = 0
 
-# Interval and step size
 r0 = 0.01
 R = 10
 h = 0.01
 
-# Epsilone in section 2.1 line 6
 epsilone = 0.01
 
-# Initial conditions
-beta = (a[0] + b[0]) / 2
 du0 = 0
-
-y0 = np.array([beta, du0])
 
 u_at_R_last_time = 1
 
@@ -46,7 +32,7 @@ for i in range(iter_count):
 
     sign_change_count = count_sign_changes(u_vector)
     print(f" TEST  + {sign_change_count}")
-    # If u at R has the same sign as last time
+
     if sign_change_count > k:
         b.append(beta)
         a.append(a[len(a) - 1])
@@ -54,15 +40,18 @@ for i in range(iter_count):
         a.append(beta)
         b.append(b[len(b) - 1])
 
-# Logging
+    if i > 8:
+        if beta == a[9]:
+            plot(r_vector, u_vector, color='r', label='Iteration 8')
+        elif beta == b[9]:
+            plot(r_vector, u_vector, color='g', label='Iteration 9')
+        elif beta == (a[9] + b[9]) / 2:
+            plot(r_vector, u_vector, color='b', label='Iteration 10')
+
 print(a)
 print(b)
 print(beta)
 
-# Plot the solution
-plt.plot(r_vector, u_vector)
-plt.xlabel('r')
-plt.ylabel('u(r)')
-plt.title('Solution of u\'\'(r) + (d-1) u\'(r)/r - u(r) +α|u(r)|^(2σ) u(r) = 0 using RK4')
-plt.grid(True)
+plot(r_vector, u_vector, color='k', label='Final Iteration')
+plt.legend()
 plt.show()
