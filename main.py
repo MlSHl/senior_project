@@ -2,10 +2,10 @@ import numpy as np
 from funcs import rk4, f, count_sign_changes, plot
 import matplotlib.pyplot as plt
 
-a = []
-b = []
-a.append(0)
-b.append(4)
+a={}
+b={}
+a[0] = 0
+b[0] = 4
 
 iter_count = 11
 k = 0
@@ -17,11 +17,13 @@ h = 0.01
 epsilone = 0.01
 
 du0 = 0
-beta = 4
+beta = {}
+beta[0] = 4
 u_at_R_last_time = 1
 # funky count
 for i in range(iter_count):
-    y0 = np.array([beta, du0])
+    print(i)
+    y0 = np.array([beta.get(i), du0])
     r_vector, y_vector = rk4(f, y0, r0, R, h)
 
     u_vector = y_vector[:, 0]
@@ -33,13 +35,13 @@ for i in range(iter_count):
     print(f" TEST  + {sign_change_count}")
 
     if sign_change_count > k:
-        b.append(beta)
-        a.append(a[len(a) - 1])
+        b[i] = beta[i]
+        a[i] = a[len(a) - 1]
     else:
-        a.append(beta)
-        b.append(b[len(b) - 1])
+        a[i] = beta[i]
+        b[i] = b[len(b) - 1]
 
-    beta = (a[len(a) - 1] + b[len(b) - 1]) / 2
+    beta[i+1] = (a[len(a) - 1] + b[len(b) - 1]) / 2
 
     if i == 7:
         plot(r_vector, u_vector, 'r', '7')
@@ -53,9 +55,9 @@ for i in range(iter_count):
     if i == 10:
         plot(r_vector, u_vector, 'y', '9')
 
-print(a)
-print(b)
-print(beta)
+print(f"a:    {a}")
+print(f"b:    {b}")
+print(f"beta: {beta}")
 
 plot(r_vector, u_vector, color='k', label='Final Iteration')
 plt.legend()
