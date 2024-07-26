@@ -2,10 +2,8 @@ import numpy as np
 from funcs import rk4, f, count_sign_changes, plot
 import matplotlib.pyplot as plt
 
-a={}
-b={}
-a[0] = 0
-b[0] = 4
+a= {0: 0}
+b= {0: 4}
 
 iter_count = 11
 k = 0
@@ -17,8 +15,9 @@ h = 0.01
 epsilone = 0.01
 
 du0 = 0
-beta = {}
-beta[0] = 4
+
+beta = {0: 4}
+
 u_at_R_last_time = 1
 r_vector, u_vector = 0, 0
 # funky count
