@@ -11,10 +11,10 @@ def f(r, y):
     dy2dr = -y2 * (d - 1) / r + y1 - alpha * abs(y1) ** (2 * sigma) * y1
     return np.array([dy1dr, dy2dr])
 
-def rk4(f, y0, r0, rf, h):
+def rk4(f, y, r0, rf, h):
     n = int((rf - r0) / h)
     r = r0
-    y = y0
+    #y = y0
     r_vector = [r]
     y_vector = [y]
 

@@ -17,11 +17,10 @@ h = 0.01
 epsilone = 0.01
 
 du0 = 0
-
+beta = 4
 u_at_R_last_time = 1
-
+# funky count
 for i in range(iter_count):
-    beta = (a[len(a) - 1] + b[len(b) - 1]) / 2
     y0 = np.array([beta, du0])
     r_vector, y_vector = rk4(f, y0, r0, R, h)
 
@@ -40,13 +39,19 @@ for i in range(iter_count):
         a.append(beta)
         b.append(b[len(b) - 1])
 
-    if i > 8:
-        if beta == a[9]:
-            plot(r_vector, u_vector, color='r', label='Iteration 8')
-        elif beta == b[9]:
-            plot(r_vector, u_vector, color='g', label='Iteration 9')
-        elif beta == (a[9] + b[9]) / 2:
-            plot(r_vector, u_vector, color='b', label='Iteration 10')
+    beta = (a[len(a) - 1] + b[len(b) - 1]) / 2
+
+    if i == 7:
+        plot(r_vector, u_vector, 'r', '7')
+
+    if i == 8:
+        plot(r_vector, u_vector, 'g', '8')
+
+    # if i == 9:
+    #     plot(r_vector, u_vector, 'b', '8')
+
+    if i == 10:
+        plot(r_vector, u_vector, 'y', '9')
 
 print(a)
 print(b)
