@@ -20,9 +20,10 @@ du0 = 0
 beta = {}
 beta[0] = 4
 u_at_R_last_time = 1
+r_vector, u_vector = 0, 0
 # funky count
 for i in range(iter_count):
-    print(i)
+    #print(i)
     y0 = np.array([beta.get(i), du0])
     r_vector, y_vector = rk4(f, y0, r0, R, h)
 
@@ -32,7 +33,7 @@ for i in range(iter_count):
     u_at_R_last_time = u_at_R
 
     sign_change_count = count_sign_changes(u_vector)
-    print(f" TEST  + {sign_change_count}")
+    print(f" Sign changes: {sign_change_count}")
 
     if sign_change_count > k:
         b[i] = beta[i]

@@ -5,16 +5,18 @@ d = 2
 alpha = 1
 sigma = 1
 
+
 def f(r, y):
     y1, y2 = y
     dy1dr = y2
     dy2dr = -y2 * (d - 1) / r + y1 - alpha * abs(y1) ** (2 * sigma) * y1
     return np.array([dy1dr, dy2dr])
 
+
 def rk4(f, y, r0, rf, h):
     n = int((rf - r0) / h)
     r = r0
-    #y = y0
+    # y = y0
     r_vector = [r]
     y_vector = [y]
 
@@ -32,11 +34,13 @@ def rk4(f, y, r0, rf, h):
 
     return np.array(r_vector), np.array(y_vector)
 
+
 def count_sign_changes(vector):
     vector = np.array(vector)
     signs = np.sign(vector)
     sign_changes = np.diff(signs)
     return np.sum(sign_changes != 0)
+
 
 def plot(r_vector, u_vector, color, label):
     plt.plot(r_vector, u_vector, color=color, label=label)
