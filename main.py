@@ -1,64 +1,42 @@
+# main.py
+
 import numpy as np
-from funcs import rk4, f, count_sign_changes, plot
 import matplotlib.pyplot as plt
+from funcs import find_ground_state
 
-a= {0: 0}
-b= {0: 4}
+# Find the ground state
+beta_star, r, u, a_values, b_values, beta_values, solutions = find_ground_state()
 
-iter_count = 11
-k = 0
+# Print the coefficients for each iteration
+print("Iteration | a | b | beta")
+print("-" * 50)
+for i, (a, b, beta) in enumerate(zip(a_values, b_values, beta_values)):
+    print(f"{i:9d} | {a:.10f} | {b:.10f} | {beta:.10f}")
 
-r0 = 0.01
-R = 10
-h = 0.01
+# Plot the results for specific iterations
+plt.figure(figsize=(12, 8))
 
-epsilone = 0.01
+# Plot 8th iteration
+r_8, u_8 = solutions[7]  # 8th iteration (index 7)
+plt.plot(r_8, u_8, label=f'8th iteration, β ≈ {beta_values[7]:.10f}', linestyle='--')
 
-du0 = 0
+# Plot 9th iteration
+r_9, u_9 = solutions[8]  # 9th iteration (index 8)
+plt.plot(r_9, u_9, label=f'9th iteration, β ≈ {beta_values[8]:.10f}', linestyle=':')
 
-beta = {0: 4}
+# Plot final solution
+plt.plot(r, u, label=f'Final, β* ≈ {beta_star:.10f}', linewidth=2)
 
-u_at_R_last_time = 1
-r_vector, u_vector = 0, 0
-# funky count
-for i in range(iter_count):
-    #print(i)
-    y0 = np.array([beta.get(i), du0])
-    r_vector, y_vector = rk4(f, y0, r0, R, h)
-
-    u_vector = y_vector[:, 0]
-    u_len = len(u_vector) - 1
-    u_at_R = u_vector[u_len]
-    u_at_R_last_time = u_at_R
-
-    sign_change_count = count_sign_changes(u_vector)
-    print(f" Sign changes: {sign_change_count}")
-
-    if sign_change_count > k:
-        b[i] = beta[i]
-        a[i] = a[len(a) - 1]
-    else:
-        a[i] = beta[i]
-        b[i] = b[len(b) - 1]
-
-    beta[i+1] = (a[len(a) - 1] + b[len(b) - 1]) / 2
-
-    if i == 7:
-        plot(r_vector, u_vector, 'r', '7')
-
-    if i == 8:
-        plot(r_vector, u_vector, 'g', '8')
-
-    # if i == 9:
-    #     plot(r_vector, u_vector, 'b', '8')
-
-    if i == 10:
-        plot(r_vector, u_vector, 'y', '9')
-
-print(f"a:    {a}")
-print(f"b:    {b}")
-print(f"beta: {beta}")
-
-plot(r_vector, u_vector, color='k', label='Final Iteration')
+plt.xlabel('r')
+plt.ylabel('u(r)')
+plt.title('Ground State of NLS Equation (d=2, α=σ=1)')
 plt.legend()
+plt.grid(True)
 plt.show()
+
+print(f"\nFinal approximate β* = {beta_star:.10f}")
+
+# Print a, b, and beta values
+print("\na values:", [f"{a:.10f}" for a in a_values])
+print("\nb values:", [f"{b:.10f}" for b in b_values])
+print("\nbeta values:", [f"{beta:.10f}" for beta in beta_values])

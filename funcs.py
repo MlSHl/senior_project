@@ -1,50 +1,66 @@
-import numpy as np
-import matplotlib.pyplot as plt
+# funcs.py
 
+import numpy as np
+
+# Global parameters
 d = 2
 alpha = 1
 sigma = 1
+R = 10
+h = 0.001  # Smaller step size for better accuracy
+epsilon = 1e-6  # Small value to check if solution remains positive
 
 
 def f(r, y):
-    y1, y2 = y
-    dy1dr = y2
-    dy2dr = -y2 * (d - 1) / r + y1 - alpha * abs(y1) ** (2 * sigma) * y1
-    return np.array([dy1dr, dy2dr])
+    u, u_prime = y
+    if r == 0:
+        return np.array([u_prime, d * (u - alpha * abs(u) ** (2 * sigma) * u)])
+    return np.array([u_prime, -((d - 1) / r) * u_prime + u - alpha * abs(u) ** (2 * sigma) * u])
 
 
-def rk4(f, y, r0, rf, h):
+def rk4(f, y0, r0, rf, h):
     n = int((rf - r0) / h)
-    r = r0
-    # y = y0
-    r_vector = [r]
-    y_vector = [y]
+    r = np.linspace(r0, rf, n + 1)
+    y = np.zeros((n + 1, 2))
+    y[0] = y0
 
-    for _ in range(n):
-        k1 = h * f(r, y)
-        k2 = h * f(r + h / 2, y + k1 / 2)
-        k3 = h * f(r + h / 2, y + k2 / 2)
-        k4 = h * f(r + h, y + k3)
+    for i in range(n):
+        k1 = h * f(r[i], y[i])
+        k2 = h * f(r[i] + h / 2, y[i] + k1 / 2)
+        k3 = h * f(r[i] + h / 2, y[i] + k2 / 2)
+        k4 = h * f(r[i] + h, y[i] + k3)
+        y[i + 1] = y[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6
 
-        y = y + (k1 + 2 * k2 + 2 * k3 + k4) / 6
-        r = r + h
-
-        r_vector.append(r)
-        y_vector.append(y)
-
-    return np.array(r_vector), np.array(y_vector)
+    return r, y
 
 
-def count_sign_changes(vector):
-    vector = np.array(vector)
-    signs = np.sign(vector)
-    sign_changes = np.diff(signs)
-    return np.sum(sign_changes != 0)
+def shoot(beta):
+    r, y = rk4(f, np.array([beta, 0]), 0, R, h)
+    return r, y[:, 0]
 
 
-def plot(r_vector, u_vector, color, label):
-    plt.plot(r_vector, u_vector, color=color, label=label)
-    plt.xlabel('r')
-    plt.ylabel('u(r)')
-    plt.title('Solution of u\'\'(r) + (d-1) u\'(r)/r - u(r) +α|u(r)|^(2σ) u(r) = 0 using RK4')
-    plt.grid(True)
+def find_ground_state():
+    a, b = 0, 4
+    a_values = [a]
+    b_values = [b]
+    beta_values = []
+    solutions = []
+    max_iterations = 10
+
+    for i in range(max_iterations):
+        beta = (a + b) / 2
+        beta_values.append(beta)
+        r, u = shoot(beta)
+        solutions.append((r, u))
+
+        if np.any(u < 0):
+            b = beta
+        elif np.all(u > epsilon):
+            a = beta
+        else:
+            break
+
+        a_values.append(a)
+        b_values.append(b)
+
+    return beta, r, u, a_values, b_values, beta_values, solutions
