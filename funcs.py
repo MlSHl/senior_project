@@ -6,7 +6,7 @@ import numpy as np
 d = 2
 alpha = 1
 sigma = 1
-R = 10
+R = 20
 h = 0.001  # Smaller step size for better accuracy
 epsilon = 1e-6  # Small value to check if solution remains positive
 
@@ -59,6 +59,43 @@ def find_ground_state():
             a = beta
         else:
             break
+
+        a_values.append(a)
+        b_values.append(b)
+
+    return beta, r, u, a_values, b_values, beta_values, solutions
+
+
+def find_excited_state(k):
+    """
+    Find the kth excited state (k=0 for ground state, k=1 for 1st excited, k=2 for 2nd excited, etc.)
+    """
+    a, b = 0, 10  # Increased upper bound to accommodate higher states
+    a_values = [a]
+    b_values = [b]
+    beta_values = []
+    solutions = []
+    max_iterations = 10  # Increased max iterations
+
+    for i in range(max_iterations):
+        beta = (a + b) / 2
+        beta_values.append(beta)
+        r, u = shoot(beta)
+        solutions.append((r, u))
+
+        # Count zero crossings
+        zero_crossings = np.sum(np.diff(np.sign(u)) != 0)
+
+        if zero_crossings > k:
+            b = beta
+        elif zero_crossings < k:
+            a = beta
+        else:
+            # Check if the solution decays to zero
+            if np.abs(u[-1]) < epsilon:
+                break
+            else:
+                b = beta
 
         a_values.append(a)
         b_values.append(b)
