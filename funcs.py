@@ -75,6 +75,7 @@ def find_excited_state(k, R=20, max_iterations=10, a0=0, b0=5):
     beta_values = []
     solutions = []
 
+    # beta =b0
     for i in range(max_iterations):
         beta = (a + b) / 2
         beta_values.append(beta)
@@ -93,6 +94,7 @@ def find_excited_state(k, R=20, max_iterations=10, a0=0, b0=5):
                 b = beta
         a_values.append(a)
         b_values.append(b)
+
 
     print(f"Max iterations reached. Last beta = {beta:.6f}")
     return beta, r, u, a_values, b_values, beta_values, solutions
@@ -184,9 +186,9 @@ def plot_figure_3(R, max_iterations):
     beta, r, u, a_values, b_values, beta_values, solutions = find_excited_state(2, R, max_iterations)
 
     # Plot the solutions for the last three iterations
-    plt.plot(r, solutions[-3][1], label=f"β = (a9+b9)/2 ≈ {beta_values[-1]:.6f}")
-    plt.plot(r, solutions[-2][1], label=f"β = a9 ≈ {a_values[-1]:.6f}")
-    plt.plot(r, solutions[-1][1], label=f"β = b9 ≈ {b_values[-1]:.6f}")
+    plt.plot(r, solutions[-1][1], label=f"β = (a9+b9)/2 ≈ {beta_values[-1]:.6f}")
+    plt.plot(r, solutions[-2][1], label=f"β = a9 ≈ {beta_values[-2]:.6f}")
+    plt.plot(r, solutions[-3][1], label=f"β = b9 ≈ {beta_values[-3]:.6f}")
 
     plt.xlabel('r')
     plt.ylabel('u(r)')
@@ -212,8 +214,8 @@ def plot_figure_4(R, max_iterations):
         print(f"{i:9d} | {a:.10f} | {b:.10f} | {beta:.10f}")
     # Plot the solutions for the last three iterations
     plt.plot(r, solutions[-1][1], label=f"β = (a9+b9)/2 ≈ {beta_values[-1]:.6f}")
-    plt.plot(r, solutions[-2][1], label=f"β = a9 ≈ {a_values[-1]:.6f}")
-    plt.plot(r, solutions[-3][1], label=f"β = b9 ≈ {b_values[-1]:.6f}")
+    plt.plot(r, solutions[-2][1], label=f"β = b9 ≈ {beta_values[-2]:.6f}")
+    plt.plot(r, solutions[-3][1], label=f"β = a9 ≈ {beta_values[-3]:.6f}")
 
     plt.xlabel('r')
     plt.ylabel('u(r)')
