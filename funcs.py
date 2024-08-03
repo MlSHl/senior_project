@@ -14,7 +14,7 @@ epsilon = 1e-6  # Small value to check if solution remains positive
 def f(r, y):
     u, u_prime = y
     if r == 0:
-        return np.array([u_prime, d * (u - alpha * abs(u) ** (2 * sigma) * u)])
+        return np.array([u_prime, (u - alpha * abs(u) ** (2 * sigma) * u) / d])
     return np.array([u_prime, -((d - 1) / r) * u_prime + u - alpha * abs(u) ** (2 * sigma) * u])
 
 
@@ -66,38 +66,36 @@ def find_ground_state():
     return beta, r, u, a_values, b_values, beta_values, solutions
 
 
-def find_excited_state(k):
-    """
-    Find the kth excited state (k=0 for ground state, k=1 for 1st excited, k=2 for 2nd excited, etc.)
-    """
-    a, b = 0, 10  # Increased upper bound to accommodate higher states
+def find_excited_state(k, a0=0, b0=5):
+    a, b = a0, b0
     a_values = [a]
     b_values = [b]
     beta_values = []
     solutions = []
-    max_iterations = 10  # Increased max iterations
-
+    max_iterations = 10
+    beta = b0
     for i in range(max_iterations):
-        beta = (a + b) / 2
         beta_values.append(beta)
         r, u = shoot(beta)
         solutions.append((r, u))
-
-        # Count zero crossings
         zero_crossings = np.sum(np.diff(np.sign(u)) != 0)
-
+        print(f"Iteration {i + 1}: beta = {beta:.6f}, zero_crossings = {zero_crossings}")
         if zero_crossings > k:
             b = beta
         elif zero_crossings < k:
             a = beta
         else:
-            # Check if the solution decays to zero
-            if np.abs(u[-1]) < epsilon:
-                break
+            if np.abs(u[-1]) < epsilon or (b - a) < epsilon:
+                return beta, r, u, a_values, b_values, beta_values, solutions
             else:
                 b = beta
-
         a_values.append(a)
         b_values.append(b)
 
+        beta = (a + b) / 2
+    print(f"Max iterations reached. Last beta = {beta:.6f}")
     return beta, r, u, a_values, b_values, beta_values, solutions
+
+
+# Plotting
+
