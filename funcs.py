@@ -184,9 +184,9 @@ def plot_figure_3(R, max_iterations):
 
     # Find the 2nd excited state (k=2)
     beta, r, u, a_values, b_values, beta_values, solutions = find_excited_state(2, R, max_iterations)
-
+    r, u = shoot(5, R)
     # Plot the solutions for the last three iterations
-    plt.plot(r, solutions[-1][1], label=f"β = (a9+b9)/2 ≈ {beta_values[-1]:.6f}")
+    plt.plot(r, u, label=f"β = (a9+b9)/2 ≈ {beta_values[-1]:.6f}")
     plt.plot(r, solutions[-2][1], label=f"β = a9 ≈ {beta_values[-2]:.6f}")
     plt.plot(r, solutions[-3][1], label=f"β = b9 ≈ {beta_values[-3]:.6f}")
 
